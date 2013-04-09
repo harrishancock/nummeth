@@ -1,0 +1,117 @@
+\title{Numerical Methods Notes}
+\author{Harris Hancock}
+\date{\today}
+\documentclass[12pt]{article}
+
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\numberwithin{equation}{section}
+
+\begin{document}
+\maketitle
+
+\section{Polynomial Synthetic Division}
+Synthetic division is an algorithm to perform Euclidean division of two
+polynomials. Given a \(k\)-degree dividend \(p\), an \(m\)-degree divisor
+\(s\), \(m \leq k\), synthetic division finds the polynomials \(q\) and
+\(r\) so that the following is true:
+\begin{align*}
+	p(x)& \in \mathbb{P}^k&
+	q(x)& \in \mathbb{P}^{k-m} \\
+	s(x)& \in \mathbb{P}^m&
+	r(x)& \in \mathbb{P}^{m-1}
+\end{align*}
+\begin{equation}
+	\frac{p(x)}{s(x)} = q(x) + \frac{r(x)}{s(x)}
+\end{equation}
+
+The formulas for the quotient and remainder are
+\begin{align}
+	\begin{split}
+	q_{k-m+1}& \equiv q_{k-m+2} \equiv \dotsb \equiv 0 \\
+	q_i& = \frac{1}{s_m}\left(p_{m+i}-\sum_{j=1}^m{s_{m-j}q_{i+j}}\right)
+	\end{split}\\
+	r_i& = p_{i}-\sum_{j=0}^{i}{s_{i-j}q_j}
+\end{align}
+
+Synthetic division is related to Horner's Method. To evaluate \(p(a)\), we can
+take the remainder of \(\frac{p(x)}{(x-a)}\).
+\begin{align*}
+               	r(x) = r_0& = p(x)-(x-a)q(x) = p(a)
+	\intertext{Substitute in the formula for \(r_0\), then again for \(q_0\).}
+		          & = p_0-\sum_{j=0}^0{s_{0-j}q_j} \\
+		          & = p_0-s_0q_0 \\
+			  & = p_0-s_0\left(\frac{1}{s_1}\left(p_1-\sum_{j=1}^1{s_{1-j}q_{0+j}}\right)\right)
+	\intertext{Since the divisor \(s(x) = x - a\) is a monic, 1-degree polynomial, then \(\frac{1}{s_1}=1\), and the sum will always only have a single iteration.}
+			  & = p_0-s_0\left(p_1-s_0q_1\right) \\
+			  & = p_0-s_0\left(p_1-s_0\left(p_2-s_0\left(\dotsm\left(p_{k-1}-s_0p_k\right)\dotsm\right)\right)\right)
+	\intertext{Finally, substituting \(-a\) for \(s_0\), we have Horner's Method.}
+			  & = p_0+a\left(p_1+a\left(p_2+a\left(\dotsm\left(p_{k-1}+ap_k\right)\dotsm\right)\right)\right) = p(a)
+\end{align*}
+
+\section{Numerical Differentiation}
+The \((n+1)\)-point formula, with error term.
+
+\begin{equation}
+	f'(x_j) = \sum_{k=0}^n{f(x_k)L'_{n,k}(x_j)}+\frac{f^{(n+1)}(\xi(x_j))}{(n+1)!}\prod_{\substack{
+	k=0 \\
+	k \neq j}}^n{(x_j-x_k)}
+\end{equation}
+where \(L_{n,k}(x)\) is the \(k\)th Lagrange coefficient polynomial of \(n\) degrees.
+\begin{align*}
+	L_{n,k}(x)& = \prod_{\substack{
+	i=0 \\
+	i \neq k}}^n{\frac{x-x_i}{x_k-x_i}} \\
+	L'_{n,k}(x)& = \left(\prod_{\substack{
+	i=0 \\
+	i \neq k}}^n{\frac{1}{x_k-x_i}}\right)\left( \sum_{\substack{
+	i=0 \\
+	i \neq k}}^n{\left(\prod_{\substack{
+	\ell =0 \\
+	\ell \neq k \\
+	\ell \neq i}}^n{(x-x_\ell)}\right)}\right)
+\end{align*}
+
+When considering uniform point spacing, i.e. \(x_j = x_0+jh\) for some small \(h\),
+the Lagrangian polynomial simplifies to:
+\begin{align*}
+	L'_{n,k}(x_j)& = \left(\prod_{\substack{
+	i=0 \\
+	i \neq k}}^n{\frac{1}{(x_0+kh)-(x_0+ih)}}\right)\left( \sum_{\substack{
+	i=0 \\
+	i \neq k}}^n{\left(\prod_{\substack{
+	\ell =0 \\
+	\ell \neq k \\
+	\ell \neq i}}^n{((x_0+jh)-(x_0+{\ell}h)}\right)}\right) \\
+	L'_{n,k}(x_j)& = \left(\prod_{\substack{
+	i=0 \\
+	i \neq k}}^n{\frac{1}{(k-i)h}}\right)\left( \sum_{\substack{
+	i=0 \\
+	i \neq k}}^n{\left(\prod_{\substack{
+	\ell =0 \\
+	\ell \neq k \\
+	\ell \neq i}}^n{(j-\ell)h}\right)}\right) \\
+	L'_{n,k}(x_j)& = \frac{1}{h}\left(\prod_{\substack{
+	i=0 \\
+	i \neq k}}^n{\frac{1}{k-i}}\right)\left( \sum_{\substack{
+	i=0 \\
+	i \neq k}}^n{\left(\prod_{\substack{
+	\ell =0 \\
+	\ell \neq k \\
+	\ell \neq i}}^n{(j-\ell)}\right)}\right)
+\end{align*}
+
+Substituting back into our original \((n+1)\)-point formula, we have
+\begin{equation}
+	f'(x_j) = \frac{1}{h}\sum_{k=0}^n{f(x_k) \left(\prod_{\substack{
+	i=0 \\
+	i \neq k}}^n{\frac{1}{k-i}}\right)\left(\sum_{\substack{
+	i=0 \\
+	i \neq k}}^n{\left(\prod_{\substack{
+	\ell =0 \\
+	\ell \neq k \\
+	\ell \neq i}}^n{(j-\ell)}\right)}\right)}+\mathcal{O}(h^n)
+\end{equation}
+\end{document}
