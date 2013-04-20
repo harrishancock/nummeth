@@ -1,0 +1,6 @@
+#ifndef NUMMETH_METAMATH_HPP
+#define NUMMETH_METAMATH_HPP
+
+
+
+#endif

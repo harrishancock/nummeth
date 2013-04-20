@@ -33,9 +33,9 @@ int main () {
     std::cout << "p0 - p1 == " << p0 - p1 << '\n';
     std::cout << "p0 - p2 == " << p0 - p2 << '\n';
     std::cout << "p0 - p3 == " << p0 - p3 << '\n';
-    std::cout << "p0 * p1 == " << p0 * p1 << '\n';
-    std::cout << "p0 * p2 == " << p0 * p2 << '\n';
-    std::cout << "p0 * p3 == " << p0 * p3 << '\n';
+    std::cout << "p0 * p1 == " << p0 << " * " << p1 << " == " << p0 * p1 << '\n';
+    std::cout << "p0 * p2 == " << p0 << " * " << p2 << " == " << p0 * p2 << '\n';
+    std::cout << "p0 * p3 == " << p0 << " * " << p3 << " == " << p0 * p3 << '\n';
 
     {
         auto qr = p0.quo_rem(p1);
